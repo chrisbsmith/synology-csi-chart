@@ -8,6 +8,7 @@ jobs:
       GITHUB_REPOSITORY_NAME: ${{ github.event.repository.name }}
     permissions:
       contents: write
+      packages: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4 # https://github.com/actions/checkout
