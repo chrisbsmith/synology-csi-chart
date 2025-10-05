@@ -1,5 +1,5 @@
 GITHUB_REPOSITORY ?= $(shell git config --get remote.origin.url | sed -E 's/.*github.com[:\/](.*)\.git/\1/')
-GITHUB_REPOSITORY_OWNER ?= $(shell echo $(GITHUB_REPOSITORY) | cut -d/ -f1)
+GITHUB_REPOSITORY_OWNER ?= $(shell echo $(helm push "${pkg}" oci://ghcr.io/${{ github.repository }}) | cut -d/ -f1)
 GITHUB_REPOSITORY_NAME ?= $(shell echo $(GITHUB_REPOSITORY) | cut -d/ -f2)
 HELM_NAMESPACE ?= $(NAMESPACE)
 HELM_OPTS ?= $(OPTS)
@@ -26,6 +26,7 @@ dist:
 	helm package . --destination dist
 	curl --fail --output-dir dist --remote-name --silent $(REPO_URL)/index.yaml || true
 	helm repo index dist --merge dist/index.yaml --url $(REPO_URL)
+	helm push ./dist/*.tgz oci://ghcr.io/$(GITHUB_REPOSITORY_NAME)
 
 .PHONY: template
 template: custom.yaml
